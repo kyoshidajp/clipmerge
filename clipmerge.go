@@ -16,37 +16,37 @@ func main() {
 	templateDir := filepath.Join(os.Getenv("HOME"), "clipboard_templates")
 
 	if _, err := os.Stat(templateDir); os.IsNotExist(err) {
-		fmt.Printf("テンプレートディレクトリが見つかりません: %s\nディレクトリを作成してください。\n", templateDir)
+		fmt.Printf("Template directory not found: %s\nPlease create the directory.\n", templateDir)
 		os.Exit(1)
 	}
 
 	currentClipboard, err := readClipboard()
 	if err != nil {
-		fmt.Println("クリップボードの内容を読み取れませんでした。")
+		fmt.Println("Could not read clipboard content.")
 		os.Exit(1)
 	}
 
 	files, err := ioutil.ReadDir(templateDir)
-	if err != nil {
-		fmt.Println("テンプレートディレクトリの内容を読み取れませんでした。")
+	if (err != nil) {
+		fmt.Println("Could not read template directory content.")
 		os.Exit(1)
 	}
 
 	templates := getTemplates(files, templateDir)
 
 	if len(templates) == 0 {
-		fmt.Printf("テンプレートが見つかりません。%s にテンプレートファイルを追加してください。\n", templateDir)
+		fmt.Printf("No templates found. %s Please add template files.\n", templateDir)
 		os.Exit(1)
 	}
 
 	selected, err := selectTemplate(templates, currentClipboard)
 	if err != nil {
-		fmt.Println("テンプレートの選択中にエラーが発生しました。")
+		fmt.Println("Error occurred while selecting template.")
 		os.Exit(1)
 	}
 
 	if selected == "" {
-		fmt.Println("操作がキャンセルされました。")
+		fmt.Println("Operation cancelled.")
 		os.Exit(0)
 	}
 
@@ -54,18 +54,18 @@ func main() {
 
 	appendString, err := ioutil.ReadFile(selectedFile)
 	if err != nil {
-		fmt.Println("選択されたテンプレートファイルを読み取れませんでした。")
+		fmt.Println("Could not read selected template file.")
 		os.Exit(1)
 	}
 
 	newClipboard := fmt.Sprintf("%s\n\n----\n%s\n----", appendString, currentClipboard)
 
 	if err := writeClipboard(newClipboard); err != nil {
-		fmt.Println("クリップボードの内容を更新できませんでした。")
+		fmt.Println("Could not update clipboard content.")
 		os.Exit(1)
 	}
 
-	fmt.Printf("\n【更新後のクリップボード内容】\n--------------------\n%s\n--------------------\n", newClipboard)
+	fmt.Printf("\n[Updated clipboard content]\n--------------------\n%s\n--------------------\n", newClipboard)
 }
 
 func getTemplates(files []os.FileInfo, templateDir string) []string {
