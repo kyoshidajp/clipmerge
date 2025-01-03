@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	templateDir := os.Getenv("HOME") + "/clipboard_templates"
+	templateDir := filepath.Join(os.Getenv("HOME"), "clipboard_templates")
 
 	if _, err := os.Stat(templateDir); os.IsNotExist(err) {
 		fmt.Printf("テンプレートディレクトリが見つかりません: %s\nディレクトリを作成してください。\n", templateDir)
