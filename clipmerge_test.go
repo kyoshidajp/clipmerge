@@ -95,3 +95,21 @@ func TestWriteClipboard(t *testing.T) {
 	content, _ := clipboard.ReadAll()
 	assert.Equal(t, expectedContent, content)
 }
+
+func TestLint(t *testing.T) {
+	cmd := exec.Command("golint", "./...")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &out
+	err := cmd.Run()
+	assert.NoError(t, err, out.String())
+}
+
+func TestVet(t *testing.T) {
+	cmd := exec.Command("go", "vet", "./...")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &out
+	err := cmd.Run()
+	assert.NoError(t, err, out.String())
+}
