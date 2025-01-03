@@ -93,17 +93,9 @@ func selectTemplate(templates []string, currentClipboard string) (string, error)
 }
 
 func readClipboard() (string, error) {
-	cmd := exec.Command("pbpaste")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	if err := cmd.Run(); err != nil {
-		return "", err
-	}
-	return out.String(), nil
+	return clipboard.ReadAll()
 }
 
 func writeClipboard(content string) error {
-	cmd := exec.Command("pbcopy")
-	cmd.Stdin = strings.NewReader(content)
-	return cmd.Run()
+	return clipboard.WriteAll(content)
 }
