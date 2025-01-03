@@ -27,7 +27,10 @@ func TestMainFunction(t *testing.T) {
 	main()
 
 	// Verify
-	updatedClipboard, _ := clipboard.ReadAll()
+	updatedClipboard, err := clipboard.ReadAll()
+	if err != nil {
+		t.Fatalf("Failed to read clipboard content: %v", err)
+	}
 	expectedClipboard := "template content\n\n----\ncurrent clipboard content\n----"
 	assert.Equal(t, expectedClipboard, updatedClipboard)
 }
