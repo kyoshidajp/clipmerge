@@ -32,12 +32,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var templates []string
-	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), ".txt") {
-			templates = append(templates, fmt.Sprintf("%s\t%s", file.Name(), filepath.Join(templateDir, file.Name())))
-		}
-	}
+	templates := getTemplates(files, templateDir)
 
 	if len(templates) == 0 {
 		fmt.Printf("テンプレートが見つかりません。%s にテンプレートファイルを追加してください。\n", templateDir)
@@ -71,6 +66,16 @@ func main() {
 	}
 
 	fmt.Printf("\n【更新後のクリップボード内容】\n--------------------\n%s\n--------------------\n", newClipboard)
+}
+
+func getTemplates(files []os.FileInfo, templateDir string) []string {
+	var templates []string
+	for _, file := range files {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".txt") {
+			templates = append(templates, fmt.Sprintf("%s\t%s", file.Name(), filepath.Join(templateDir, file.Name())))
+		}
+	}
+	return templates
 }
 
 func selectTemplate(templates []string, currentClipboard string) (string, error) {
