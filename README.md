@@ -2,6 +2,7 @@
 
 `clipmerge` is a tool to merge clipboard content with templates. It allows you to select a template and append it to the current clipboard content.
 
+
 ## Installation
 
 1. Clone the repository:
