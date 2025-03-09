@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Get version from tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build binaries
+        run: |
+          mkdir -p dist
+          GOOS=darwin GOARCH=amd64 go build -o dist/clipmerge_darwin_amd64
+          GOOS=darwin GOARCH=arm64 go build -o dist/clipmerge_darwin_arm64
+          GOOS=linux GOARCH=amd64 go build -o dist/clipmerge_linux_amd64
+          GOOS=linux GOARCH=arm64 go build -o dist/clipmerge_linux_arm64
+
+      - name: Archive binaries
+        run: |
+          cd dist
+          tar -czvf clipmerge_darwin_amd64.tar.gz clipmerge_darwin_amd64
+          tar -czvf clipmerge_darwin_arm64.tar.gz clipmerge_darwin_arm64
+          tar -czvf clipmerge_linux_amd64.tar.gz clipmerge_linux_amd64
+          tar -czvf clipmerge_linux_arm64.tar.gz clipmerge_linux_arm64
+          cd ..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/clipmerge_darwin_amd64.tar.gz
+            dist/clipmerge_darwin_arm64.tar.gz
+            dist/clipmerge_linux_amd64.tar.gz
+            dist/clipmerge_linux_arm64.tar.gz
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: false
