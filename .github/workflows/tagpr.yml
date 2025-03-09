@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run tagpr
-        uses: Songmu/tagpr@v1
+      - run: go install github.com/snaka/tagpr/cmd/tagpr@debug-20240919-1613
+      - run: tagpr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
