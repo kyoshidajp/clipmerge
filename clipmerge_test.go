@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/atotto/clipboard"
@@ -28,7 +27,10 @@ func TestMainFunction(t *testing.T) {
 	main()
 
 	// Verify
-	updatedClipboard, _ := clipboard.ReadAll()
+	updatedClipboard, err := clipboard.ReadAll()
+	if err != nil {
+		t.Fatalf("Failed to read clipboard content: %v", err)
+	}
 	expectedClipboard := "template content\n\n----\ncurrent clipboard content\n----"
 	assert.Equal(t, expectedClipboard, updatedClipboard)
 }
@@ -94,4 +96,22 @@ func TestWriteClipboard(t *testing.T) {
 	assert.NoError(t, err)
 	content, _ := clipboard.ReadAll()
 	assert.Equal(t, expectedContent, content)
+}
+
+func TestLint(t *testing.T) {
+	cmd := exec.Command("golint", "./...")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &out
+	err := cmd.Run()
+	assert.NoError(t, err, out.String())
+}
+
+func TestVet(t *testing.T) {
+	cmd := exec.Command("go", "vet", "./...")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &out
+	err := cmd.Run()
+	assert.NoError(t, err, out.String())
 }
